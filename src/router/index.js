@@ -3,6 +3,8 @@ import Products from '../views/Products.vue'
 import Sells from '../views/Sells.vue'
 import CreateProduct from '../views/CreateProduct.vue'
 import CreateSell from '../views/CreateSell.vue'
+import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
 
 const routes = [
   {
@@ -29,6 +31,16 @@ const routes = [
     path: '/create-sell',
     name: 'CreateSell',
     component: CreateSell
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
   },
 ]
 
