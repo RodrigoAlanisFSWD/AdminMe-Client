@@ -1,28 +1,46 @@
 import { createStore } from 'vuex'
 import axios from 'axios';
+import Cookie from 'universal-cookie';
 
 const url = 'http://localhost:3000/api/'
+const cookie = new Cookie()
 
 export default createStore({
   state: {
     products: [],
-    sells: []
+    sells: [],
+    user: {}
   },
   mutations: {
+
+    // Products
+
     setProducts(state, payload) {
       state.products = payload
     },
     newProduct(state, payload) {
       state.products = state.products.push(payload)
     },
+
+    // Sells
+
     setSells(state, payload) {
       state.sells = payload
     },
     newSell(state, payload) {
       state.sells = state.sells.push(payload)
     },
+
+    // Auth
+
+    setUser(state, payload) {
+      state.user = payload
+    }
   },
   actions: {
+
+    // Products
+
     setProducts(ctx) {
       if (!localStorage.getItem('products')) {
         localStorage.setItem('products', JSON.stringify([]))
@@ -49,6 +67,9 @@ export default createStore({
       localStorage.setItem('products', newData)
       ctx.commit('setProducts', JSON.parse(newData))
     },
+
+    // Sells
+
     setSells(ctx) {
       if (!localStorage.getItem('sells')) {
         localStorage.setItem('sells', JSON.stringify([]))
@@ -74,6 +95,33 @@ export default createStore({
       const newData = JSON.stringify(data.filter(el => el.id != payload))
       localStorage.setItem('sells', newData)
       ctx.commit('setSells', JSON.parse(newData))
+    },
+
+    // Auth
+
+    async setUser(ctx) {
+      try {
+        if (cookie.get("token")) {
+          console.log(cookie.get("token"))
+          const { data } = await axios({
+            method: "GET",
+            headers: {
+              "Authorization": "Bearer " + cookie.get("token")
+            },
+            url: url + "user/profile"
+          })
+
+          data.user.token = cookie.get("token", {
+            path: "/",
+            maxAge: 60 * 60 * 72,
+            domain: "localhost"
+          })
+
+          ctx.commit('setUser', data.user)
+        } 
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   modules: {
@@ -92,6 +140,9 @@ export default createStore({
       } else {
         return state.sells
       }
+    },
+    getUser: (state) => {
+      return state.user
     }
   }
 })

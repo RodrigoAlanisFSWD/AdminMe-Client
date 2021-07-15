@@ -2,52 +2,87 @@
   <div class="flex flex-col justify-start w-screen h-screen">
     <Navbar />
     <div class="w-screen h-full flex items-center justify-center">
-      <form class="w-2/6 h-3/4 shadow-xl border border-gray-100 rounded">
+      <form
+        @submit.prevent="submit()"
+        class="
+          w-full
+          sm:w-4/6
+          md:w-3/6
+          xl:w-2/6
+          h-3/4
+          xl:h-4/6
+          shadow-xl
+          border border-gray-100
+          rounded
+          form-register
+        "
+        id="form"
+      >
         <div>
-          <div class="m-8 text-4xl font-montserrat font-bold">Register</div>
-          <div class="w-full bg-gray-200 p-3 pl-5">Create a new account to start</div>
+          <div class="m-8 text-3xl md:text-4xl font-montserrat font-bold">
+            Register
+          </div>
+          <div class="w-full bg-gray-200 p-3 pl-5">
+            Create a new account to start
+          </div>
         </div>
-        <div class="p-5 h-3/4">
-          <div class="h-4/6 flex flex-col justify-around">
+        <div class="p-5 h-3/4 flex flex-col justify-between">
+          <div>
+            <div>
+              <label for="avatar" class="w-full block h-12 rounded shadow-md flex items-center pl-3 text-gray-400">
+                {{  register.avatar != "" ? 'Avatar Selected' : 'Select An Avatar' }}
+              </label>
+              <input id="avatar" name="avatar" @change="fileChanger" type="file" class="hidden"/>
+            </div>
             <Input
               :placeholder="'Username'"
               type="text"
               :data="register"
               item="username"
-              class="h-14"
+              class="h-14 mt-5"
             />
             <Input
               :placeholder="'Password'"
               type="text"
               :data="register"
               item="password"
-              class="h-14"
+              class="h-14 mt-5"
             />
-            <Input
-              :placeholder="'Company'"
-              type="text"
-              :data="register"
-              item="company"
-              class="h-14"
-            />
-            <div class="flex items-center mt-3 mb-5">
+            <div class="flex items-center mt-5 mb-5">
               <input
                 type="checkbox"
                 class="w-8 h-5 rounded border border-gray-600"
               />
-              <p class="ml-2">
+              <p class="ml-2 text-md lg:text-lg">
                 I accept the terms of the offer of the
                 <span class="text-purple">privacy policy</span>
               </p>
             </div>
           </div>
 
-          <div class="h-14 mt-8">
-            <Button text="Send" :primary="true" class="text-lg" />
+          <div>
+            <div class="h-12 md:h-14">
+              <Button text="Send" :primary="true" class="text-md md:text-lg" />
+            </div>
+            <div
+              class="
+                text-sm
+                md:text-lg
+                h-12
+                md:h-14
+                flex
+                w-full
+                items-center
+                justify-center
+                text-white
+                bg-red-700
+                mt-5
+                rounded
+              "
+            >
+              {{ error }}
+            </div>
           </div>
-          <router-link to="/login" class="text-purple w-full flex items-center justify-center h-14 text-lg mt-5">
-            Login
-          </router-link>
         </div>
       </form>
     </div>
@@ -58,6 +93,9 @@
 import Navbar from "../components/Navbar.vue";
 import Input from "../components/Input.vue";
 import Button from "../components/Button.vue";
+import axios from "axios";
+import { mapActions } from "vuex";
+import Cookie from "universal-cookie";
 
 export default {
   components: {
@@ -70,12 +108,53 @@ export default {
       register: {
         username: "",
         password: "",
-        company: ''
+        avatar: ""
       },
+      error: "Enter All The Data",
     };
+  },
+  methods: {
+    ...mapActions(["setUser"]),
+    async submit() {
+      try {
+        const formData = new FormData()
+        formData.append("username", this.register.username)
+        formData.append("password", this.register.password)
+        formData.append("avatar", this.register.avatar)
+        const cookie = new Cookie();
+        const { data } = await axios({
+          method: "POST",
+          url: "http://localhost:3000/api/auth/register",
+          data: formData,
+        });
+
+        console.log(data);
+
+        if (data.res == 101) {
+          this.error = "The Username Is Already Taken";
+          return;
+        }
+
+        cookie.set("token", data.token, {
+          path: "/",
+          maxAge: 60 * 60 * 72,
+          domain: "localhost",
+        });
+
+        this.setUser();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    fileChanger(e) {
+      this.register.avatar = e.target.files[0]
+    }
   },
 };
 </script>
 
 <style>
+.form-register {
+  height: 625px !important;
+}
 </style>

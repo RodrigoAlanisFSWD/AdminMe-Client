@@ -10,10 +10,11 @@ export default {
     this.init()
   },
   methods: {
-    ...mapActions(["setProducts", "setSells"]),
+    ...mapActions(["setProducts", "setSells", "setUser"]),
     async init() {
       this.setProducts();
       this.setSells();
+      this.setUser();
     }
   },
 };
