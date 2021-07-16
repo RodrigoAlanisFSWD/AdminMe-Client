@@ -12,9 +12,9 @@ export default {
   methods: {
     ...mapActions(["setProducts", "setSells", "setUser"]),
     async init() {
-      this.setProducts();
-      this.setSells();
-      this.setUser();
+      await this.setUser();
+      await this.setProducts();
+      await this.setSells();
     }
   },
 };

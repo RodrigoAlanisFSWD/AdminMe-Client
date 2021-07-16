@@ -18,8 +18,8 @@ export default createStore({
     setProducts(state, payload) {
       state.products = payload
     },
-    newProduct(state, payload) {
-      state.products = state.products.push(payload)
+    deleteProduct(state, payload) {
+      state.products = state.products.filter(el => el.id != payload)
     },
 
     // Sells
@@ -27,8 +27,8 @@ export default createStore({
     setSells(state, payload) {
       state.sells = payload
     },
-    newSell(state, payload) {
-      state.sells = state.sells.push(payload)
+    deleteSell(state, payload) {
+      state.sells = state.sells.filter(el => el.id != payload)
     },
 
     // Auth
@@ -41,60 +41,116 @@ export default createStore({
 
     // Products
 
-    setProducts(ctx) {
-      if (!localStorage.getItem('products')) {
-        localStorage.setItem('products', JSON.stringify([]))
-      } else {
-        const data = localStorage.getItem('products')
-        ctx.commit('setProducts', JSON.parse(data))
+    async setProducts(ctx) {
+      try {
+        const { data } = await axios({
+          method: "GET",
+          url: url + 'product/getAll',
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+        })
+
+        ctx.commit('setProducts', data.data)
+      } catch (error) {
+        console.log(error)
       }
     },
-    newProduct(ctx, payload) {
-      let data = JSON.parse(localStorage.getItem('products'))
-      const newData = data = [...data,{
-        id: payload.id,
-        name: payload.name,
-        total: payload.total,
-        price: payload.price,
-        cost: payload.cost
-      }]
-      localStorage.setItem('products', JSON.stringify(newData))
-      ctx.commit('setProducts', JSON.parse(localStorage.getItem('products')))
+    async newProduct(ctx, payload) {
+      try {
+        const { data } = await axios({
+          method: "POST",
+          url: url + 'product/create',
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+          data: payload
+        })
+
+        const products = await axios({
+          method: "GET",
+          url: url + 'product/getAll',
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+        })
+
+        ctx.commit('setProducts', products.data.data)
+      } catch (error) {
+        console.log(error)
+      }
     },
-    deleteProduct(ctx, payload) {
-      const data = JSON.parse(localStorage.getItem('products'))
-      const newData = JSON.stringify(data.filter(el => el.id != payload))
-      localStorage.setItem('products', newData)
-      ctx.commit('setProducts', JSON.parse(newData))
+    async deleteProduct(ctx, payload) {
+      try {
+        const { data } = await axios({
+          method: "DELETE",
+          url: url + 'product/delete/' + payload,
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+        })
+
+        ctx.commit('deleteProduct', payload)
+      } catch (error) {
+        console.log(error)
+      }
     },
 
     // Sells
 
-    setSells(ctx) {
-      if (!localStorage.getItem('sells')) {
-        localStorage.setItem('sells', JSON.stringify([]))
-      } else {
-        const data = localStorage.getItem('sells')
-        ctx.commit('setSells', JSON.parse(data))
+    async setSells(ctx) {
+      try {
+        const { data } = await axios({
+          method: "GET",
+          url: url + 'sell/getAll',
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+        })
+
+        ctx.commit('setSells', data.data)
+      } catch (error) {
+        console.log(error)
       }
     },
-    newSell(ctx, payload) {
-      let data = JSON.parse(localStorage.getItem('sells'))
-      const newData = data = [...data,{
-        id: payload.id,
-        name: payload.name,
-        total: payload.total,
-        products: payload.products,
-        earnings: payload.earnings,
-      }]
-      localStorage.setItem('sells', JSON.stringify(newData))
-      ctx.commit('setSells', JSON.parse(localStorage.getItem('sells')))
+    async newSell(ctx, payload) {
+      try {
+        await axios({
+          method: "POST",
+          url: url + 'sell/create',
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+          data: payload
+        })
+
+        const products = await axios({
+          method: "GET",
+          url: url + 'sell/getAll',
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+        })
+
+        ctx.commit('setSells', products.data.data)
+      } catch (error) {
+        console.log(error)
+      }
     },
-    deleteSell(ctx, payload) {
-      const data = JSON.parse(localStorage.getItem('sells'))
-      const newData = JSON.stringify(data.filter(el => el.id != payload))
-      localStorage.setItem('sells', newData)
-      ctx.commit('setSells', JSON.parse(newData))
+    async deleteSell(ctx, payload) {
+      try {
+        const { data } = await axios({
+          method: "DELETE",
+          url: url + 'sell/delete/' + payload,
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+        })
+
+        ctx.commit('deleteSell', payload)
+      } catch (error) {
+        console.log(error)
+      }
     },
 
     // Auth

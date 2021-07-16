@@ -60,7 +60,7 @@
         </div>
         <div class="w-2/4 lg:w-2/5 ml-2 lg:ml-1 h-10">
           <Button
-            @click="deleteSell(item.id)"
+            @click="deleteProduct(item.id)"
             text="Delete"
             :primary="true"
             class="ml-0 lg:ml-5"

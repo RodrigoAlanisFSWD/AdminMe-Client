@@ -156,7 +156,6 @@ export default {
   data() {
     return {
       item: {
-        id: "",
         name: "",
         total: 0,
         products: [],
@@ -173,32 +172,32 @@ export default {
     ...mapActions(["newSell"]),
     submit() {
       if (this.item.name.length > 0 && this.item.products.length > 0) {
-        this.item.id = uniqid();
+        console.log(this.item)
         this.newSell(this.item);
         this.error = false;
-        this.item = {
-          id: "",
-          name: "",
-          total: 0,
-          products: [],
-          earnings: 0,
-        };
-        this.$router.push("/sells");
+        // this.item = {
+        //   id: "",
+        //   name: "",
+        //   total: 0,
+        //   products: [],
+        //   earnings: 0,
+        // };
+        // this.$router.push("/sells");
       } else {
         this.error = true;
       }
     },
     addProduct(item) {
       if (this.item.products.find((el) => el.id === item.id) === undefined) {
-        this.item.products.push({ id: item.id, name: item.name, total: 1 });
+        this.item.products.push({ product_id: item.id, name: item.name, total: 1 });
       } else {
-        const index = this.item.products.findIndex((el) => el.id === item.id);
+        const index = this.item.products.findIndex((el) => el.id === item.product_id);
         this.sumTotal(this.item.products[index]);
       }
       this.modal = false;
       this.item.total += 1;
       this.item.earnings += this.getProducts("").find(
-        (el) => el.id === item.id
+        (el) => el.id === item.product_id
       ).price;
     },
     showModal() {
@@ -208,12 +207,12 @@ export default {
       this.modal = false;
     },
     sumTotal(item) {
-      const product = this.getProducts("").find((el) => el.id === item.id);
+      const product = this.getProducts("").find((el) => el.id === item.product_id);
       if (item.total < product.total) {
         item.total += 1;
         this.item.total += 1;
         this.item.earnings += this.getProducts("").find(
-          (el) => el.id === item.id
+          (el) => el.id === item.product_id
         ).price;
       }
     },

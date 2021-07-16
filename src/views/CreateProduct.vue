@@ -83,7 +83,6 @@ export default {
   data() {
     return {
       item: {
-        id: "",
         name: "",
         total: "",
         price: "",
@@ -106,7 +105,6 @@ export default {
       } else {
         this.error = false;
         this.item = {
-          id: "",
           name: "",
           total: "",
           price: "",
@@ -118,11 +116,9 @@ export default {
         this.item.price > 0 &&
         this.item.cost > 0
       ) {
-        this.item.id = uniqid();
         this.newProduct(this.item);
         this.error = false;
         this.item = {
-          id: "",
           name: "",
           total: "",
           price: "",
