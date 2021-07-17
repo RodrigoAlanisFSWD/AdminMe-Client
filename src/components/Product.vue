@@ -56,7 +56,7 @@
         "
       >
         <div class="w-2/4 lg:w-2/5 mr-2 lg:mr-1 h-10">
-          <Button text="Edit" :primary="false" class="ml-0 lg:ml-5" />
+          <Button text="Edit" :primary="false" class="ml-0 lg:ml-5" @click="$router.push('/update/' + item.id)" />
         </div>
         <div class="w-2/4 lg:w-2/5 ml-2 lg:ml-1 h-10">
           <Button

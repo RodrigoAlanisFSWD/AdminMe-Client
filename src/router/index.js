@@ -5,6 +5,7 @@ import CreateProduct from '../views/CreateProduct.vue'
 import CreateSell from '../views/CreateSell.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import UpdateProduct from '../views/UpdateProduct.vue'
 
 const routes = [
   {
@@ -41,6 +42,11 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/update/:id',
+    name: 'UpdateProduct',
+    component: UpdateProduct
   },
 ]
 

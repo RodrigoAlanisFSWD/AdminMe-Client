@@ -21,6 +21,10 @@ export default createStore({
     deleteProduct(state, payload) {
       state.products = state.products.filter(el => el.id != payload)
     },
+    updateProduct(state, payload) {
+      const index = state.products.findIndex(el => el.id === payload.id)
+      state.products[index] = payload
+    },
 
     // Sells
 
@@ -91,6 +95,22 @@ export default createStore({
         })
 
         ctx.commit('deleteProduct', payload)
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    async updateProduct(ctx, payload) {
+      try {
+        const { data } = await axios({
+          method: "PUT",
+          url: url + 'product/update/' + payload.id,
+          headers: {
+            "Authorization": "Bearer " + ctx.state.user.token
+          },
+          data: payload
+        })
+
+        ctx.commit('updateProduct', payload)
       } catch (error) {
         console.log(error)
       }

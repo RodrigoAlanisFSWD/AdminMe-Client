@@ -175,14 +175,13 @@ export default {
         console.log(this.item)
         this.newSell(this.item);
         this.error = false;
-        // this.item = {
-        //   id: "",
-        //   name: "",
-        //   total: 0,
-        //   products: [],
-        //   earnings: 0,
-        // };
-        // this.$router.push("/sells");
+        this.item = {
+          name: "",
+          total: 0,
+          products: [],
+          earnings: 0,
+        };
+        this.$router.push("/sells");
       } else {
         this.error = true;
       }
